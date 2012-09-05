@@ -4,7 +4,11 @@
   "description": "bagpipe.js",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha -R spec"
+  },
+  "dependencies": {
+  	"mocha": "*",
+  	"should": "*"
   },
   "author": "Jackson Tian",
   "license": "MIT"
