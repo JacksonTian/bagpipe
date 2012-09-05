@@ -1,0 +1,11 @@
+{
+  "name": "bagpipe",
+  "version": "0.0.1",
+  "description": "bagpipe.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Jackson Tian",
+  "license": "MIT"
+}
