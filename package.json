@@ -1,7 +1,12 @@
 {
   "name": "bagpipe",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "bagpipe.js",
+  "keywords": [
+    "limiter",
+    "concurrency limit",
+    "parallel limit"
+  ],
   "main": "index.js",
   "scripts": {
     "test": "mocha -R spec"
