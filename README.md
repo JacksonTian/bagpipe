@@ -31,8 +31,8 @@ var Bagpipe = require('bagpipe');
 // 设定最大并发数为10
 var bagpipe = new Bagpipe(10);
 for (var i = 0; i < 100; i++) {
-  bagpipe.push(async, [], function () {
-    // 异步调用
+  bagpipe.push(async, function () {
+    // 异步回调执行
   });
 }
 ```
@@ -42,7 +42,42 @@ for (var i = 0; i < 100; i++) {
 这个方案与你预想的方案相比，如何？
 
 ## 原理
-`Bagpipe`通过`push`将调用传入内部队列。如果活跃调用小于最大并发数，将会被取出直接执行，反之则继续呆在队列中。当一个异步调用结束的时候，会从队列前取出调用执行。以此来保证异步调用的活跃量不高于限定值。
+`Bagpipe`通过`push`将调用传入内部队列。如果活跃调用小于最大并发数，将会被取出直接执行，反之则继续呆在队列中。当一个异步调用结束的时候，会从队列前取出调用执行。以此来保证异步调用的活跃量不高于限定值。  
+当队列的长度大于100或者大于最大并发数的2倍时，Bagpipe对象将会触发它的`full`事件，该事件传递队列长度值。该值有助于评估业务性能参数。示例如下：
+
+```
+bagpipe.on('full', function (length) {
+  console.warn('底层系统处理不能及时完成，队列拥堵，目前队列长度为:' + length);
+});
+```
+
+## 模块状态
+单元测试通过状态：[![Build Status](https://secure.travis-ci.org/JacksonTian/bagpipe.png)](http://travis-ci.org/JacksonTian/bagpipe)。单元测试覆盖率[100%](http://html5ify.com/bagpipe/coverage.html)。
+
+## 最佳实践
+- 确保异步调用的最后一个参数为回调参数
+- 监听`full`事件，以增加你对业务性能的评估
+- 目前异步方法未支持上下文。确保异步方法内部没有`this`引用
+
+## 实际案例
+当你需要遍历文件目录的时候，异步可以确保充分利用IO。你可以轻松发起成千上万个文件的读取。但是，系统文件描述符是有限的。不服的话，遇见下面这个错误再来重读此文。
+
+```
+Error: EMFILE, too many open files
+```
+也有人会考虑用同步方法来进行处理。但是，同步时，CPU与IO并不能并行利用，一定情况下，性能是不可弃的一项指标。用上`Bagpipe`，可以轻松享受并发，也能限制并发。
+
+```
+var bagpipe = new Bagpipe(10);
+
+var files = ['这里有很多很多文件'];
+for (var i = 0; i < files.length; i++) {
+  bagpipe.push(fs.readFile, files[i], 'utf-8', function (err, data) {
+    // 不会因为文件描述符过多出错
+    // 妥妥的
+  });
+}
+```
 
 ## License
 在[MIT](https://github.com/JacksonTian/bagpipe/blob/master/MIT-License)许可证下发布，欢迎享受开源
