@@ -1,5 +1,5 @@
 var should = require('should');
-var Bagpipe = require('../lib/bagpipe.js');
+var Bagpipe = require('../');
 
 describe('bagpipe', function () {
   var async = function (ms, callback) {
@@ -118,5 +118,35 @@ describe('bagpipe', function () {
       });
       bagpipe.active.should.be.equal(0);
     }
+  });
+
+  it('full event should fired when above limit', function (done) {
+    var limit = 5;
+    var bagpipe = new Bagpipe(limit);
+    bagpipe.limit.should.be.equal(limit);
+    bagpipe.queue.should.have.length(0);
+    bagpipe.active.should.be.equal(0);
+    var counter = 0;
+    bagpipe.on('full', function (length) {
+      length.should.above(limit * 2);
+      counter++;
+    });
+
+    for (var i = 0; i < 100; i++) {
+      bagpipe.push(async, 10, function () {});
+    }
+    counter.should.above(0);
+    done();
+  });
+
+  it('should support without callback', function (done) {
+    var limit = 5;
+    var bagpipe = new Bagpipe(limit);
+    bagpipe.limit.should.be.equal(limit);
+    bagpipe.queue.should.have.length(0);
+    bagpipe.active.should.be.equal(0);
+    bagpipe.push(async, 10);
+    bagpipe.active.should.be.equal(1);
+    done();
   });
 });
