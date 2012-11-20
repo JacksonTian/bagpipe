@@ -73,6 +73,7 @@ var bagpipe = new Bagpipe(10);
 
 var files = ['这里有很多很多文件'];
 for (var i = 0; i < files.length; i++) {
+  // fs.readFile(files[i], 'utf-8', function (err, data) {
   bagpipe.push(fs.readFile, files[i], 'utf-8', function (err, data) {
     // 不会因为文件描述符过多出错
     // 妥妥的
