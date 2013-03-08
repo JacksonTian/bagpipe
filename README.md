@@ -1,86 +1,86 @@
-Bagpipe(风笛)
+Bagpipe [Chinese](https://github.com/JacksonTian/bagpipe/blob/master/README_CN.md)
 =======
-You are the bagpiper.  
+You are the bagpiper.
 
-## 起源
-在Node中我们可以十分方便利用异步和并行来提升我们的业务速度。但是，如果并发量过大，我们的服务器却可能吃不消，我们需要限制并发量。尽管`http`模块自身有[http.Agent](http://nodejs.org/docs/latest/api/http.html#http_class_http_agent)这样的玩意，用于控制socket的数量，但是通常我们的异步API早就封装好了。改动API的内部agent是不现实的，那么我们自己在逻辑层实现吧。
+## Introduction
+It is convenient for us to use asynchronism or concurrent to promote our business speed in Node. While, if the amount of concurrent is too large, our server may not support, such that we need to limit the amount of concurrent. Though, the http module contains [http.Agent](http://nodejs.org/docs/latest/api/http.html#http_class_http_agent) to control the amount of sockets, usually, our asynchronous API has packaged in advance. It is not realistic to change the inner API agent, let’s realize it on our own logical layer.
 
-## 安装
+## Installation
 ```
 npm install bagpipe
 ```
 
 ## API
-`Bagpipe`暴露的API只有构造器和实例方法`push`。
+The APIs exposed by Bagpipe only include constructor and instance methods `push`.
 
-在原始状态下，我们执行并发可能是如下这样的，这会形成100个并发异步调用。
+Under original status, we may execute concurrent like this, forming 100 concurrent asynchronous invokes.
 
 ```
 for (var i = 0; i < 100; i++) {
-  async(function () {
-    // 异步调用
-  });
+  async(function () {
+    // Asynchronous call
+  });
 }
 ```
-如果需要限制并发，你的方案会是怎样？
-
-`Bagpipe`的方案是如下这样的：
+If need to limit concurrency, what is your solution?
+Solution from Bagpipe as follows:
 
 ```
 var Bagpipe = require('bagpipe');
-// 设定最大并发数为10
+// Sets the max concurrency as 100
 var bagpipe = new Bagpipe(10);
 for (var i = 0; i < 100; i++) {
   bagpipe.push(async, function () {
-    // 异步回调执行
+    // execute asynchronous callback
   });
 }
 ```
 
-是的，调用方式仅仅是将方法、参数、回调分拆一下通过`push`交给`bagpipe`即可。
+Yes, invoke method only splits method、parameter and callback, then delivery it to bagpipe through `push`.
 
-这个方案与你预想的方案相比，如何？
+How does it like compared with your anticipated solution?
 
-## 原理
-`Bagpipe`通过`push`将调用传入内部队列。如果活跃调用小于最大并发数，将会被取出直接执行，反之则继续呆在队列中。当一个异步调用结束的时候，会从队列前取出调用执行。以此来保证异步调用的活跃量不高于限定值。  
-当队列的长度大于100或者大于最大并发数的2倍时，Bagpipe对象将会触发它的`full`事件，该事件传递队列长度值。该值有助于评估业务性能参数。示例如下：
+## Principles
+Bagpipe delivers invoke into inner queue through `push`. If active invoke amount is less than max concurrent, it will be popped and executed directly, or it will stay in the queue. When an asynchronous invoke ends, a invoke in the head of the queue will be popped and executed, such that assures active asynchronous invoke amount no larger than restricted value.
+
+When the queue length is larger than 100 or twice larger than max concurrent number, Bagpipe object will fire its `full` event, which delivers the queue length value. The value helps to assess business performance. For example:
 
 ```
 bagpipe.on('full', function (length) {
-  console.warn('底层系统处理不能及时完成，队列拥堵，目前队列长度为:' + length);
+  console.warn('Button system cannot deal on time, queue jam, current queue length is:’+ length);
 });
 ```
 
-## 模块状态
-单元测试通过状态：[![Build Status](https://secure.travis-ci.org/JacksonTian/bagpipe.png)](http://travis-ci.org/JacksonTian/bagpipe)。单元测试覆盖率[100%](http://html5ify.com/bagpipe/coverage.html)。
+## Module status
+The unit testing status: [![Build Status](https://secure.travis-ci.org/JacksonTian/bagpipe.png) (http://travis-ci.org/JacksonTian/bagpipe). Unit test coverage [100%](http://html5ify.com/bagpipe/coverage.html).
 
-## 最佳实践
-- 确保异步调用的最后一个参数为回调参数
-- 监听`full`事件，以增加你对业务性能的评估
-- 目前异步方法未支持上下文。确保异步方法内部没有`this`引用
-- 异步调用应当具备timeout的业务处理，无论业务是否完成，总在一定的时间内保证返回
+## Best Practices
+- Ensure that the last parameter of the asynchronous invoke is callback.
+- Listen to the `full` event, adding your business performance assessment.
+- Current asynchronous method has not supported context yet. Ensure that there is no `this` reference in asynchronous method. If there is `this` reference in asynchronous method, please use `bind` pass into correct context.
+- Asynchronous invoke should process method to deal with timeout, it should ensure the invoke will return in a certain time no matter whether the business has been finished or not.
 
-## 实际案例
-当你需要遍历文件目录的时候，异步可以确保充分利用IO。你可以轻松发起成千上万个文件的读取。但是，系统文件描述符是有限的。不服的话，遇见下面这个错误再来重读此文。
+## Real case
+When you want to traverse file directories, asynchrony can ensure `full` use of IO. You can invoke thousands of file reading easily. But, system file descriptions are limited. If disobedient, read this article again when occurring errors as follows.
 
 ```
 Error: EMFILE, too many open files
 ```
-也有人会考虑用同步方法来进行处理。但是，同步时，CPU与IO并不能并行利用，一定情况下，性能是不可弃的一项指标。用上`Bagpipe`，可以轻松享受并发，也能限制并发。
+
+Someone may consider dealing it with synchronous method. But, when synchronous, CPU and IO cannot be used concurrently, performance is an indefeasible index under certain condition. You can enjoy concurrent easily, as well as limit concurrent with Bagpipe.
 
 ```
 var bagpipe = new Bagpipe(10);
 
-var files = ['这里有很多很多文件'];
+var files = ['Here are many files'];
 for (var i = 0; i < files.length; i++) {
   // fs.readFile(files[i], 'utf-8', function (err, data) {
   bagpipe.push(fs.readFile, files[i], 'utf-8', function (err, data) {
-    // 不会因为文件描述符过多出错
-    // 妥妥的
+    // won’t occur error because of too many file descriptions
+    // well done
   });
 }
 ```
 
 ## License
-在[MIT](https://github.com/JacksonTian/bagpipe/blob/master/MIT-License)许可证下发布，欢迎享受开源
-
+Released under the license of [MIT](https://github.com/JacksonTian/bagpipe/blob/master/MIT-License), welcome to enjoy open source.
