@@ -1,4 +1,4 @@
-Bagpipe [Chinese](https://github.com/JacksonTian/bagpipe/blob/master/README_CN.md)
+Bagpipe [中文](https://github.com/JacksonTian/bagpipe/blob/master/README_CN.md)
 =======
 You are the bagpiper.
 
@@ -52,7 +52,7 @@ bagpipe.on('full', function (length) {
 ```
 
 ## Module status
-The unit testing status: [![Build Status](https://secure.travis-ci.org/JacksonTian/bagpipe.png) (http://travis-ci.org/JacksonTian/bagpipe). Unit test coverage [100%](http://html5ify.com/bagpipe/coverage.html).
+The unit testing status: [![Build Status](https://secure.travis-ci.org/JacksonTian/bagpipe.png)](http://travis-ci.org/JacksonTian/bagpipe). Unit test coverage [100%](http://html5ify.com/bagpipe/coverage.html).
 
 ## Best Practices
 - Ensure that the last parameter of the asynchronous invoke is callback.
