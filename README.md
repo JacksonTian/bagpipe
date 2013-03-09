@@ -61,7 +61,7 @@ The unit testing status: [![Build Status](https://secure.travis-ci.org/JacksonTi
 - Asynchronous invoke should process method to deal with timeout, it should ensure the invoke will return in a certain time no matter whether the business has been finished or not.
 
 ## Real case
-When you want to traverse file directories, asynchrony can ensure `full` use of IO. You can invoke thousands of file reading easily. But, system file descriptions are limited. If disobedient, read this article again when occurring errors as follows.
+When you want to traverse file directories, asynchrony can ensure `full` use of IO. You can invoke thousands of file reading easily. But, system file descriptors are limited. If disobedient, read this article again when occurring errors as follows.
 
 ```
 Error: EMFILE, too many open files
@@ -76,7 +76,7 @@ var files = ['Here are many files'];
 for (var i = 0; i < files.length; i++) {
   // fs.readFile(files[i], 'utf-8', function (err, data) {
   bagpipe.push(fs.readFile, files[i], 'utf-8', function (err, data) {
-    // won’t occur error because of too many file descriptions
+    // won’t occur error because of too many file descriptors
     // well done
   });
 }
