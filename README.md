@@ -43,11 +43,19 @@ How does it like compared with your anticipated solution?
 ## Principles
 Bagpipe delivers invoke into inner queue through `push`. If active invoke amount is less than max concurrent, it will be popped and executed directly, or it will stay in the queue. When an asynchronous invoke ends, a invoke in the head of the queue will be popped and executed, such that assures active asynchronous invoke amount no larger than restricted value.
 
-When the queue length is larger than 100 or twice larger than max concurrent number, Bagpipe object will fire its `full` event, which delivers the queue length value. The value helps to assess business performance. For example:
+When the queue length is larger than 1, Bagpipe object will fire its `full` event, which delivers the queue length value. The value helps to assess business performance. For example:
 
 ```
 bagpipe.on('full', function (length) {
   console.warn('Button system cannot deal on time, queue jam, current queue length is:’+ length);
+});
+```
+
+If queue length more than limit, you can set the `refuse` option to decide continue in queue or refuse call. The `refuse` default `false`. If set as `true`, the `TooMuchAsyncCallError` exception will pass to callback directly:
+
+```
+var bagpipe = new BagPipe(10, {
+  refuse: true
 });
 ```
 

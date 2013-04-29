@@ -1,9 +1,12 @@
 var should = require('should');
+var pedding = require('pedding');
 var Bagpipe = require('../');
 
 describe('bagpipe', function () {
   var async = function (ms, callback) {
-    setTimeout(callback, ms);
+    setTimeout(function () {
+      callback(null, {});
+    }, ms);
   };
 
   it('constructor', function () {
@@ -11,7 +14,7 @@ describe('bagpipe', function () {
     bagpipe.limit.should.be.equal(10);
     bagpipe.queue.should.have.length(0);
     bagpipe.active.should.be.equal(0);
-    bagpipe.disabled.should.be.equal(false);
+    bagpipe.options.disabled.should.be.equal(false);
   });
 
   it('constructor disabled', function () {
@@ -19,7 +22,7 @@ describe('bagpipe', function () {
     bagpipe.limit.should.be.equal(10);
     bagpipe.queue.should.have.length(0);
     bagpipe.active.should.be.equal(0);
-    bagpipe.disabled.should.be.equal(true);
+    bagpipe.options.disabled.should.be.equal(true);
   });
 
   it('constructor limit less than 1', function (done) {
@@ -61,26 +64,26 @@ describe('bagpipe', function () {
     bagpipe.active.should.be.equal(1);
   });
 
-  // it('push, async with this', function (done) {
-  //   var bagpipe = new Bagpipe(5);
-  //   bagpipe.limit.should.be.equal(5);
-  //   bagpipe.queue.should.have.length(0);
-  //   bagpipe.active.should.be.equal(0);
-  //   var context = {value: 10};
-  //   context.async = function (callback) {
-  //     this.value--;
-  //     var that = this;
-  //     process.nextTick(function() {
-  //       callback(that.value);
-  //     });
-  //   };
+  it('push, async with this', function (done) {
+    var bagpipe = new Bagpipe(5);
+    bagpipe.limit.should.be.equal(5);
+    bagpipe.queue.should.have.length(0);
+    bagpipe.active.should.be.equal(0);
+    var context = {value: 10};
+    context.async = function (callback) {
+      this.value--;
+      var that = this;
+      process.nextTick(function() {
+        callback(that.value);
+      });
+    };
 
-  //   bagpipe.push(context.async, function () {
-  //     bagpipe.active.should.be.equal(0);
-  //     done();
-  //   });
-  //   bagpipe.active.should.be.equal(1);
-  // });
+    bagpipe.push(context.async.bind(context), function () {
+      bagpipe.active.should.be.equal(0);
+      done();
+    });
+    bagpipe.active.should.be.equal(1);
+  });
 
   it('push, active should not be above limit', function (done) {
     var limit = 5;
@@ -128,12 +131,13 @@ describe('bagpipe', function () {
     bagpipe.active.should.be.equal(0);
     var counter = 0;
     bagpipe.on('full', function (length) {
-      length.should.above(limit * 2);
+      length.should.above(1);
       counter++;
     });
 
+    var noop = function () {};
     for (var i = 0; i < 100; i++) {
-      bagpipe.push(async, 10, function () {});
+      bagpipe.push(async, 10, noop);
     }
     counter.should.above(0);
     done();
@@ -148,5 +152,27 @@ describe('bagpipe', function () {
     bagpipe.push(async, 10);
     bagpipe.active.should.be.equal(1);
     done();
+  });
+
+  it('should get TooMuchAsyncCallError', function (done) {
+    done = pedding(5, done);
+    var limit = 2;
+    var bagpipe = new Bagpipe(limit, {
+      refuse: true
+    });
+    bagpipe.limit.should.be.equal(limit);
+    bagpipe.queue.should.have.length(0);
+    bagpipe.active.should.be.equal(0);
+    for (var i = 0; i < 4; i++) {
+      bagpipe.push(async, 10, function (err) {
+        should.not.exist(err);
+        done();
+      });
+    }
+    bagpipe.push(async, 10, function (err) {
+      should.exist(err);
+      done();
+    });
+    bagpipe.active.should.be.equal(2);
   });
 });

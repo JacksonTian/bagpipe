@@ -1,6 +1,6 @@
 {
   "name": "bagpipe",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "bagpipe.js",
   "keywords": [
     "limiter",
@@ -13,7 +13,9 @@
   },
   "devDependencies": {
     "mocha": "*",
-    "should": "*"
+    "should": "*",
+    "pedding": "*",
+    "jscover": "*"
   },
   "author": "Jackson Tian",
   "license": "MIT"
