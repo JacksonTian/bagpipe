@@ -4,15 +4,20 @@ TIMEOUT = 20000
 JSCOVERAGE = ./node_modules/.bin/jscover
 
 test:
-	@NODE_ENV=test ./node_modules/.bin/mocha \
+	@NODE_ENV=test ./node_modules/mocha/bin/mocha \
 		--reporter $(REPORTER) \
 		--timeout $(TIMEOUT) \
+		$(MOCHA_OPTS) \
 		$(TESTS)
 
 test-cov:
-	@rm -rf ./lib-cov
-	@$(JSCOVERAGE) lib lib-cov
-	@BAGPIPE_COV=1 $(MAKE) test REPORTER=dot
-	@BAGPIPE_COV=1 $(MAKE) test REPORTER=html-cov > coverage.html
+	@$(MAKE) test REPORTER=dot
+	@$(MAKE) test MOCHA_OPTS='--require blanket' REPORTER=html-cov > coverage.html
+	@$(MAKE) test MOCHA_OPTS='--require blanket' REPORTER=travis-cov
 
-.PHONY: test test-cov
+test-all: test test-cov
+
+clean:
+	@rm -rf node_modules
+
+.PHONY: test test-cov test-all clean

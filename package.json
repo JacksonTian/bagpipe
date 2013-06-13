@@ -1,6 +1,6 @@
 {
   "name": "bagpipe",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Concurrency limit",
   "keywords": [
     "limiter",
@@ -9,13 +9,13 @@
   ],
   "main": "index.js",
   "scripts": {
-    "test": "mocha -R spec"
-  },
-  "devDependencies": {
-    "mocha": "*",
-    "should": "*",
-    "pedding": "*",
-    "jscover": "*"
+    "test": "make test-all",
+    "blanket": {
+      "pattern": "bagpipe/lib"
+    },
+    "travis-cov": {
+      "threshold": 99
+    }
   },
   "author": "Jackson Tian",
   "license": "MIT",
@@ -25,10 +25,12 @@
     "doc": "doc",
     "test": "test"
   },
-  "dependencies": {
-    "pedding": "~0.0.1",
-    "should": "~1.1.0",
-    "jscover": "~0.1.1"
+  "devDependencies": {
+    "pedding": "*",
+    "should": "*",
+    "blanket": "*",
+    "mocha": "*",
+    "travis-cov": "*"
   },
   "repository": {
     "type": "git",
