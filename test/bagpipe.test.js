@@ -177,33 +177,25 @@ describe('bagpipe', function () {
   });
 
   it('should get BagpipeTimeoutError', function (done) {
-    var _async1 = function (ms, callback) {
+    var _async = function (ms, callback) {
       setTimeout(function () {
         callback(null, {ms: ms});
-      }, 1);
+      }, ms);
     };
-    var _async2 = function (ms, callback) {
-      setTimeout(function () {
-        callback(null, {ms: ms});
-      }, 100);
-    };
-    var limit = 1;
-    var bagpipe = new Bagpipe(limit, {
-      refuse: true,
-      timeout: 50
+    var bagpipe = new Bagpipe(10, {
+      timeout: 10
     });
-    bagpipe.limit.should.be.equal(limit);
 
-    bagpipe.push(_async1, 10, function (err, data) {
+    bagpipe.push(_async, 5, function (err, data) {
       should.not.exist(err);
       should.exist(data);
-      data.should.have.property('ms', 10);
+      data.should.have.property('ms', 5);
     });
 
-    bagpipe.push(_async2, 20, function (err) {
+    bagpipe.push(_async, 15, function (err) {
       should.exist(err);
       err.name.should.eql('BagpipeTimeoutError');
-      err.message.should.eql('50ms timeout');
+      err.message.should.eql('10ms timeout');
       done();
     });
   });
