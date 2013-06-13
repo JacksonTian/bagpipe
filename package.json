@@ -18,5 +18,23 @@
     "jscover": "*"
   },
   "author": "Jackson Tian",
-  "license": "MIT"
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "75269c60fdbb897be14575e70a2b86cf43999500",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "dependencies": {
+    "pedding": "~0.0.1",
+    "should": "~1.1.0",
+    "jscover": "~0.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/JacksonTian/bagpipe.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JacksonTian/bagpipe/issues"
+  }
 }
