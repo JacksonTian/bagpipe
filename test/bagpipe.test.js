@@ -175,4 +175,36 @@ describe('bagpipe', function () {
     });
     bagpipe.active.should.be.equal(2);
   });
+
+  it('should get BagpipeTimeoutError', function (done) {
+    var _async1 = function (ms, callback) {
+      setTimeout(function () {
+        callback(null, {ms: ms});
+      }, 1);
+    };
+    var _async2 = function (ms, callback) {
+      setTimeout(function () {
+        callback(null, {ms: ms});
+      }, 100);
+    };
+    var limit = 1;
+    var bagpipe = new Bagpipe(limit, {
+      refuse: true,
+      timeout: 50
+    });
+    bagpipe.limit.should.be.equal(limit);
+
+    bagpipe.push(_async1, 10, function (err, data) {
+      should.not.exist(err);
+      should.exist(data);
+      data.should.have.property('ms', 10);
+    });
+
+    bagpipe.push(_async2, 20, function (err) {
+      should.exist(err);
+      err.name.should.eql('BagpipeTimeoutError');
+      err.message.should.eql('50ms timeout');
+      done();
+    });
+  });
 });
