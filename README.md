@@ -40,6 +40,11 @@ Yes, invoke method only splits method、parameter and callback, then delivery it
 
 How does it like compared with your anticipated solution?
 
+### Options
+
+- `refuse`, when queue is fulled, bagpipe will refuse the new async call and execute the callback with a `TooMuchAsyncCallError` exception. default `false`.
+- `timeout`, setting global ansyn call timeout. If async call doesn't complete in time, will execute the callback with `BagpipeTimeoutError` exception. default `null`.
+
 ## Principles
 Bagpipe delivers invoke into inner queue through `push`. If active invoke amount is less than max concurrent, it will be popped and executed directly, or it will stay in the queue. When an asynchronous invoke ends, a invoke in the head of the queue will be popped and executed, such that assures active asynchronous invoke amount no larger than restricted value.
 
@@ -56,6 +61,14 @@ If queue length more than limit, you can set the `refuse` option to decide conti
 ```
 var bagpipe = new BagPipe(10, {
   refuse: true
+});
+```
+
+If complete the async call is unexpected, the queue will not balanced. Set the timeout, let the callback executed with the `BagpipeTimeoutError` exception:
+
+```
+var bagpipe = new BagPipe(10, {
+  timeout: 1000
 });
 ```
 
