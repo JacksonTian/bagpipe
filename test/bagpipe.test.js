@@ -176,6 +176,38 @@ describe('bagpipe', function () {
     bagpipe.active.should.be.equal(2);
   });
 
+  it('should get TooMuchAsyncCallError with ratio', function (done) {
+    done = pedding(7, done);
+    var limit = 2;
+    var bagpipe = new Bagpipe(limit, {
+      refuse: true,
+      ratio: 2
+    });
+    bagpipe.limit.should.be.equal(limit);
+    bagpipe.queue.should.have.length(0);
+    bagpipe.active.should.be.equal(0);
+    for (var i = 0; i < 2; i++) {
+      bagpipe.push(async, 10, function (err) {
+        should.not.exist(err);
+        done();
+      });
+    }
+    bagpipe.queue.should.have.length(0);
+    for (i = 0; i < 4; i++) {
+      bagpipe.push(async, 10, function (err) {
+        should.not.exist(err);
+        done();
+      });
+    }
+    bagpipe.queue.should.have.length(4);
+    bagpipe.push(async, 10, function (err) {
+      should.exist(err);
+      done();
+    });
+    bagpipe.active.should.be.equal(2);
+    bagpipe.queue.should.have.length(4);
+  });
+
   it('should get BagpipeTimeoutError', function (done) {
     var _async = function (ms, callback) {
       setTimeout(function () {
