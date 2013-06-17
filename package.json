@@ -1,6 +1,6 @@
 {
   "name": "bagpipe",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Concurrency limit",
   "keywords": [
     "limiter",
