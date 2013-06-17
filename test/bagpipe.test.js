@@ -209,7 +209,7 @@ describe('bagpipe', function () {
   });
 
   it('should get BagpipeTimeoutError', function (done) {
-    var _async = function (ms, callback) {
+    var _async = function _async(ms, callback) {
       setTimeout(function () {
         callback(null, {ms: ms});
       }, ms);
@@ -228,6 +228,9 @@ describe('bagpipe', function () {
       should.exist(err);
       err.name.should.eql('BagpipeTimeoutError');
       err.message.should.eql('10ms timeout');
+      err.data.should.have.property('name', '_async');
+      err.data.should.have.property('method');
+      err.data.args.should.eql([15]);
       done();
     });
   });
