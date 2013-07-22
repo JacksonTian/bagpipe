@@ -209,22 +209,33 @@ describe('bagpipe', function () {
   });
 
   it('should get BagpipeTimeoutError', function (done) {
+    done = pedding(3, done);
     var _async = function _async(ms, callback) {
       setTimeout(function () {
         callback(null, {ms: ms});
       }, ms);
     };
+    var _async2 = function _async(ms, callback) {
+      setTimeout(function () {
+        callback(new Error('Timeout'));
+      }, ms);
+    };
     var bagpipe = new Bagpipe(10, {
       timeout: 10
+    });
+    bagpipe.on('outdated', function (err) {
+      should.exist(err);
+      done();
     });
 
     bagpipe.push(_async, 5, function (err, data) {
       should.not.exist(err);
       should.exist(data);
       data.should.have.property('ms', 5);
+      done();
     });
 
-    bagpipe.push(_async, 15, function (err) {
+    bagpipe.push(_async2, 15, function (err) {
       should.exist(err);
       err.name.should.eql('BagpipeTimeoutError');
       err.message.should.eql('10ms timeout');
