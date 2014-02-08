@@ -106,3 +106,7 @@ for (var i = 0; i < files.length; i++) {
 
 ## License
 Released under the license of [MIT](https://github.com/JacksonTian/bagpipe/blob/master/MIT-License), welcome to enjoy open source.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/JacksonTian/bagpipe/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
