@@ -1,6 +1,8 @@
-Bagpipe(风笛) [English](https://github.com/JacksonTian/bagpipe/blob/master/README.md)
+Bagpipe(风笛)
 =======
 You are the bagpiper.
+
+- [English](https://github.com/JacksonTian/bagpipe/blob/master/README.md)
 
 ## 起源
 在Node中我们可以十分方便利用异步和并行来提升我们的业务速度。但是，如果并发量过大，我们的服务器却可能吃不消，我们需要限制并发量。尽管`http`模块自身有[http.Agent](http://nodejs.org/docs/latest/api/http.html#http_class_http_agent)这样的玩意，用于控制socket的数量，但是通常我们的异步API早就封装好了。改动API的内部agent是不现实的，那么我们自己在逻辑层实现吧。
@@ -106,4 +108,3 @@ for (var i = 0; i < files.length; i++) {
 
 ## License
 在[MIT](https://github.com/JacksonTian/bagpipe/blob/master/MIT-License)许可证下发布，欢迎享受开源
-

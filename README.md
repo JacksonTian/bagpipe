@@ -1,13 +1,16 @@
-Bagpipe [中文](https://github.com/JacksonTian/bagpipe/blob/master/README_CN.md)
+Bagpipe
 =======
 You are the bagpiper.
+
+- [中文](https://github.com/JacksonTian/bagpipe/blob/master/README_CN.md)
 
 ## Introduction
 It is convenient for us to use asynchronism or concurrent to promote our business speed in Node. While, if the amount of concurrent is too large, our server may not support, such that we need to limit the amount of concurrent. Though, the http module contains [http.Agent](http://nodejs.org/docs/latest/api/http.html#http_class_http_agent) to control the amount of sockets, usually, our asynchronous API has packaged in advance. It is not realistic to change the inner API agent, let’s realize it on our own logical layer.
 
 ## Installation
-```
-npm install bagpipe
+
+```sh
+$ npm install bagpipe
 ```
 
 ## API
@@ -15,18 +18,19 @@ The APIs exposed by Bagpipe only include constructor and instance methods `push`
 
 Under original status, we may execute concurrent like this, forming 100 concurrent asynchronous invokes.
 
-```
+```js
 for (var i = 0; i < 100; i++) {
   async(function () {
     // Asynchronous call
   });
 }
 ```
+
 If need to limit concurrency, what is your solution?
 
 Solution from Bagpipe as follows:
 
-```
+```js
 var Bagpipe = require('bagpipe');
 // Sets the max concurrency as 100
 var bagpipe = new Bagpipe(10);
@@ -51,7 +55,7 @@ Bagpipe delivers invoke into inner queue through `push`. If active invoke amount
 
 When the queue length is larger than 1, Bagpipe object will fire its `full` event, which delivers the queue length value. The value helps to assess business performance. For example:
 
-```
+```js
 bagpipe.on('full', function (length) {
   console.warn('Button system cannot deal on time, queue jam, current queue length is:’+ length);
 });
@@ -59,7 +63,7 @@ bagpipe.on('full', function (length) {
 
 If queue length more than limit, you can set the `refuse` option to decide continue in queue or refuse call. The `refuse` default `false`. If set as `true`, the `TooMuchAsyncCallError` exception will pass to callback directly:
 
-```
+```js
 var bagpipe = new BagPipe(10, {
   refuse: true
 });
@@ -67,14 +71,14 @@ var bagpipe = new BagPipe(10, {
 
 If complete the async call is unexpected, the queue will not balanced. Set the timeout, let the callback executed with the `BagpipeTimeoutError` exception:
 
-```
+```js
 var bagpipe = new BagPipe(10, {
   timeout: 1000
 });
 ```
 
 ## Module status
-The unit testing status: [![Build Status](https://secure.travis-ci.org/JacksonTian/bagpipe.png)](http://travis-ci.org/JacksonTian/bagpipe). Unit test coverage [100%](http://html5ify.com/bagpipe/coverage.html).
+The unit testing status: [![Build Status](https://secure.travis-ci.org/JacksonTian/bagpipe.png)](http://travis-ci.org/JacksonTian/bagpipe).
 
 ## Best Practices
 - Ensure that the last parameter of the asynchronous invoke is callback.
@@ -85,13 +89,13 @@ The unit testing status: [![Build Status](https://secure.travis-ci.org/JacksonTi
 ## Real case
 When you want to traverse file directories, asynchrony can ensure `full` use of IO. You can invoke thousands of file reading easily. But, system file descriptors are limited. If disobedient, read this article again when occurring errors as follows.
 
-```
+```js
 Error: EMFILE, too many open files
 ```
 
 Someone may consider dealing it with synchronous method. But, when synchronous, CPU and IO cannot be used concurrently, performance is an indefeasible index under certain condition. You can enjoy concurrent easily, as well as limit concurrent with Bagpipe.
 
-```
+```js
 var bagpipe = new Bagpipe(10);
 
 var files = ['Here are many files'];
@@ -106,7 +110,3 @@ for (var i = 0; i < files.length; i++) {
 
 ## License
 Released under the license of [MIT](https://github.com/JacksonTian/bagpipe/blob/master/MIT-License), welcome to enjoy open source.
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/JacksonTian/bagpipe/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
