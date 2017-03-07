@@ -57,7 +57,7 @@ When the queue length is larger than 1, Bagpipe object will fire its `full` even
 
 ```js
 bagpipe.on('full', function (length) {
-  console.warn('Button system cannot deal on time, queue jam, current queue length is:’+ length);
+  console.warn(`Button system cannot deal on time, queue jam, current queue length is: ${length}`);
 });
 ```
 
