@@ -2,9 +2,7 @@
 
 const Bagpipe = require('./lib/bagpipe');
 
-Bagpipe.limitify = function (asyncCall, options) {
-  var bagpipe = new Bagpipe(options);
-
+Bagpipe.limitify = function (asyncCall, bagpipe) {
   return function (...args) {
     bagpipe.push(asyncCall, ...args);
   };
