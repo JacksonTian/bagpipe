@@ -7,29 +7,18 @@
     "concurrency limit",
     "parallel limit"
   ],
-  "main": "index.js",
-  "scripts": {
-    "test": "make test-all",
-    "blanket": {
-      "pattern": "bagpipe/lib"
-    },
-    "travis-cov": {
-      "threshold": 99
-    }
-  },
+  "main": "lib/bagpipe",
   "author": "Jackson Tian",
   "license": "MIT",
-  "readmeFilename": "README.md",
-  "gitHead": "75269c60fdbb897be14575e70a2b86cf43999500",
   "directories": {
-    "doc": "doc",
     "test": "test"
   },
   "devDependencies": {
+    "coveralls": "^2.12.0",
+    "istanbul": "^0.4.5",
+    "mocha": "*",
     "pedding": "*",
     "should": "*",
-    "blanket": "*",
-    "mocha": "*",
     "travis-cov": "*"
   },
   "repository": {
@@ -38,5 +27,9 @@
   },
   "bugs": {
     "url": "https://github.com/JacksonTian/bagpipe/issues"
+  },
+  "homepage": "https://github.com/JacksonTian/bagpipe#readme",
+  "scripts": {
+    "test": "make test"
   }
 }

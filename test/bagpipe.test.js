@@ -1,6 +1,8 @@
-var should = require('should');
-var pedding = require('pedding');
-var Bagpipe = require('../');
+'use strict';
+
+const should = require('should');
+const pedding = require('pedding');
+const Bagpipe = require('../');
 
 describe('bagpipe', function () {
   var async = function (ms, callback) {
