@@ -7,7 +7,7 @@
     "concurrency limit",
     "parallel limit"
   ],
-  "main": "lib/bagpipe",
+  "main": "index.js",
   "author": "Jackson Tian",
   "license": "MIT",
   "directories": {
@@ -32,5 +32,5 @@
   "scripts": {
     "test": "make test"
   },
-  "files": ["lib"]
+  "files": ["lib", "index.js"]
 }
