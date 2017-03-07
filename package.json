@@ -14,10 +14,11 @@
     "test": "test"
   },
   "devDependencies": {
+    "coveralls": "^2.12.0",
+    "istanbul": "^0.4.5",
+    "mocha": "*",
     "pedding": "*",
     "should": "*",
-    "blanket": "*",
-    "mocha": "*",
     "travis-cov": "*"
   },
   "repository": {
