@@ -5,7 +5,7 @@ You are the bagpiper.
 - [中文](https://github.com/JacksonTian/bagpipe/blob/master/README_CN.md)
 
 ## Introduction
-It is convenient for us to use asynchronism or concurrent to promote our business speed in Node. While, if the amount of concurrent is too large, our server may not support, such that we need to limit the amount of concurrent. Though, the http module contains [http.Agent](http://nodejs.org/docs/latest/api/http.html#http_class_http_agent) to control the amount of sockets, usually, our asynchronous API has packaged in advance. It is not realistic to change the inner API agent, let’s realize it on our own logical layer.
+It is convenient for us to use asynchrony or concurrency to promote our business speed in Node. However, if the amount of concurrency is too large, our server may not support it, and we'll need to limit its amount. The HTTP module contains [http.Agent](http://nodejs.org/docs/latest/api/http.html#http_class_http_agent) to control the amount of sockets our asynchronous API has packaged (usually) in advance. It is not realistic to change the inner API agent; let’s realize it on our own logical layer.
 
 ## Installation
 
@@ -16,7 +16,7 @@ $ npm install bagpipe
 ## API
 The APIs exposed by Bagpipe only include constructor and instance methods `push`.
 
-Under original status, we may execute concurrent like this, forming 100 concurrent asynchronous invokes.
+Under original status, we may execute concurrent calls like this, forming 100 concurrent asynchronous invokes:
 
 ```js
 for (var i = 0; i < 100; i++) {
@@ -28,7 +28,7 @@ for (var i = 0; i < 100; i++) {
 
 If need to limit concurrency, what is your solution?
 
-Solution from Bagpipe as follows:
+Solution from Bagpipe:
 
 ```js
 var Bagpipe = require('bagpipe');
@@ -41,9 +41,9 @@ for (var i = 0; i < 100; i++) {
 }
 ```
 
-Yes, invoke method only splits method、parameter and callback, then delivery it to bagpipe through `push`.
+Yes. The invoke method only splits method, parameter and callback, then delivers it to bagpipe through `push`.
 
-How does it like compared with your anticipated solution?
+How does Bagpipe compare with your anticipated solution?
 
 ### Options
 
