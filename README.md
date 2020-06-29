@@ -69,7 +69,7 @@ var bagpipe = new BagPipe(10, {
 });
 ```
 
-If complete the async call is unexpected, the queue will not balanced. Set the timeout, let the callback executed with the `BagpipeTimeoutError` exception:
+If some async call may take long time to finish, thus blocking subsequent calls and making the queue unbalanced. Set the timeout, let the callback executed with the `BagpipeTimeoutError` exception:
 
 ```js
 var bagpipe = new BagPipe(10, {
@@ -85,7 +85,7 @@ The unit testing status: [![Build Status](https://secure.travis-ci.org/JacksonTi
 - Listen to the `full` event, adding your business performance assessment.
 - Current asynchronous method has not supported context yet. Ensure that there is no `this` reference in asynchronous method. If there is `this` reference in asynchronous method, please use `bind` pass into correct context.
 - Asynchronous invoke should process method to deal with timeout, it should ensure the invoke will return in a certain time no matter whether the business has been finished or not.
-
+- Ensure that the callback function be called no matter what happens. If you cann't ensure this, you'd better set the timeout option, otherwise subsequent asynchronous methods may be blocked.
 ## Real case
 When you want to traverse file directories, asynchrony can ensure `full` use of IO. You can invoke thousands of file reading easily. But, system file descriptors are limited. If disobedient, read this article again when occurring errors as follows.
 
