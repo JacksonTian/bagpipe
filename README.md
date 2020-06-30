@@ -49,6 +49,7 @@ How does Bagpipe compare with your anticipated solution?
 
 - `refuse`, when queue is fulled, bagpipe will refuse the new async call and execute the callback with a `TooMuchAsyncCallError` exception. default `false`.
 - `timeout`, setting global ansyn call timeout. If async call doesn't complete in time, will execute the callback with `BagpipeTimeoutError` exception. default `null`.
+- `clearQueueWhenError`, when one asynchronous call fails, clear the inner task queue, then suspending tasks won't be activated（activated tasks are not affected）.default`false`.
 
 ## Principles
 Bagpipe delivers invoke into inner queue through `push`. If active invoke amount is less than max concurrent, it will be popped and executed directly, or it will stay in the queue. When an asynchronous invoke ends, a invoke in the head of the queue will be popped and executed, such that assures active asynchronous invoke amount no larger than restricted value.
@@ -69,7 +70,7 @@ var bagpipe = new BagPipe(10, {
 });
 ```
 
-If complete the async call is unexpected, the queue will not balanced. Set the timeout, let the callback executed with the `BagpipeTimeoutError` exception:
+If some async call may take long time to finish, thus blocking subsequent calls and making the queue unbalanced. Set the timeout, let the callback executed with the `BagpipeTimeoutError` exception:
 
 ```js
 var bagpipe = new BagPipe(10, {
@@ -85,7 +86,7 @@ The unit testing status: [![Build Status](https://secure.travis-ci.org/JacksonTi
 - Listen to the `full` event, adding your business performance assessment.
 - Current asynchronous method has not supported context yet. Ensure that there is no `this` reference in asynchronous method. If there is `this` reference in asynchronous method, please use `bind` pass into correct context.
 - Asynchronous invoke should process method to deal with timeout, it should ensure the invoke will return in a certain time no matter whether the business has been finished or not.
-
+- Ensure that the callback function be called no matter what happens. If you cann't ensure this, you'd better set the timeout option, otherwise subsequent asynchronous methods may be blocked.
 ## Real case
 When you want to traverse file directories, asynchrony can ensure `full` use of IO. You can invoke thousands of file reading easily. But, system file descriptors are limited. If disobedient, read this article again when occurring errors as follows.
 
