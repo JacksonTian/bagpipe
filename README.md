@@ -49,6 +49,7 @@ How does Bagpipe compare with your anticipated solution?
 
 - `refuse`, when queue is fulled, bagpipe will refuse the new async call and execute the callback with a `TooMuchAsyncCallError` exception. default `false`.
 - `timeout`, setting global ansyn call timeout. If async call doesn't complete in time, will execute the callback with `BagpipeTimeoutError` exception. default `null`.
+- `clearQueueWhenError`, when one asynchronous call fails, clear the inner task queue, then suspending tasks won't be activated（activated tasks are not affected）.default`false`.
 
 ## Principles
 Bagpipe delivers invoke into inner queue through `push`. If active invoke amount is less than max concurrent, it will be popped and executed directly, or it will stay in the queue. When an asynchronous invoke ends, a invoke in the head of the queue will be popped and executed, such that assures active asynchronous invoke amount no larger than restricted value.
