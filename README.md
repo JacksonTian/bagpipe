@@ -32,7 +32,7 @@ Solution from Bagpipe:
 
 ```js
 var Bagpipe = require('bagpipe');
-// Sets the max concurrency as 100
+// Sets the max concurrency as 10
 var bagpipe = new Bagpipe(10);
 for (var i = 0; i < 100; i++) {
   bagpipe.push(async, function () {
