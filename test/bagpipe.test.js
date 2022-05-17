@@ -11,6 +11,12 @@ describe('bagpipe', function () {
     }, ms);
   };
 
+  var errorAsync = function (ms, callback) {
+    setTimeout(function () {
+      callback(new Error(), null);
+    }, ms);
+  };
+
   it('constructor', function () {
     var bagpipe = new Bagpipe(10);
     bagpipe.limit.should.be.equal(10);
@@ -71,11 +77,11 @@ describe('bagpipe', function () {
     bagpipe.limit.should.be.equal(5);
     bagpipe.queue.should.have.length(0);
     bagpipe.active.should.be.equal(0);
-    var context = {value: 10};
+    var context = { value: 10 };
     context.async = function (callback) {
       this.value--;
       var that = this;
-      process.nextTick(function() {
+      process.nextTick(function () {
         callback(that.value);
       });
     };
@@ -137,7 +143,7 @@ describe('bagpipe', function () {
       counter++;
     });
 
-    var noop = function () {};
+    var noop = function () { };
     for (var i = 0; i < 100; i++) {
       bagpipe.push(async, 10, noop);
     }
@@ -214,7 +220,7 @@ describe('bagpipe', function () {
     done = pedding(3, done);
     var _async = function _async(ms, callback) {
       setTimeout(function () {
-        callback(null, {ms: ms});
+        callback(null, { ms: ms });
       }, ms);
     };
     var _async2 = function _async(ms, callback) {
@@ -246,5 +252,24 @@ describe('bagpipe', function () {
       err.data.args.should.eql([15]);
       done();
     });
+  });
+
+  it('should clear queue when error occurs', function (done) {
+    var limit = 2;
+    var bagpipe = new Bagpipe(limit, {
+      clearQueueWhenError: true
+    });
+    var counter = 3;
+    var noop = function () { };
+    for (var i = 0; i < counter; i++) {
+      bagpipe.push(async, 10, noop);
+    }
+    bagpipe.push(errorAsync, 10, () => {
+      bagpipe.queue.should.have.length(0);
+      done();
+    });
+    for (var i = 0; i < counter; i++) {
+      bagpipe.push(async, 1000, noop);
+    }
   });
 });
